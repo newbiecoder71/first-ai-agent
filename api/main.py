@@ -39,15 +39,20 @@ async def home(request: Request):
 
 @app.post("/agent", response_model=AgentResponse)
 async def invoke_agent(request: AgentRequest):
-    """
-    Call the AI agent with user input.
-    """
+    """Invoke the AI agent."""
+    print("🚀 /agent called with:", request.prompt)  # DEBUG
+
     try:
         if not request.prompt.strip():
+            print("❌ Empty prompt")  # DEBUG
             raise HTTPException(status_code=400, detail="Prompt cannot be empty.")
 
         result = run_agent(request.prompt)
+        print("✅ Agent result:", result)  # DEBUG
+
         return AgentResponse(response=result)
 
     except Exception as e:
+        print("🔥 ERROR inside /agent:", str(e))  # DEBUG
         raise HTTPException(status_code=500, detail=f"Error invoking agent: {str(e)}")
+
