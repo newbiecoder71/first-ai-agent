@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Agent</title>
+</head>
+<body>
+    <h1>AI Agent</h1>
+
+    <form id="agentForm">
+        <input id="prompt" type="text" placeholder="Ask something..." required />
+        <button type="submit">Send</button>
+    </form>
+
+    <pre id="result"></pre>
+
+    <script>
+        document.getElementById("agentForm").onsubmit = async function(e) {
+            e.preventDefault();
+
+            const prompt = document.getElementById("prompt").value;
+            
+            const res = await fetch("/agent", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt })
+            });
+
+            const data = await res.json();
+            document.getElementById("result").textContent = data.response;
+        };
+    </script>
+</body>
+</html>
