@@ -1,43 +1,47 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from pathlib import Path
 from pydantic import BaseModel
+from pathlib import Path
 
-# Import our agent
-from agent import run_agent
+# Import run_agent from api/agent.py
+from api.agent import run_agent
 
-# Base directory of the project
-BASE_DIR = Path(__file__).resolve().parent
+# BASE DIRECTORY OF PROJECT ROOT (not /api)
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Setup FastAPI
 app = FastAPI()
 
-# Mount static directory (public folder)
+# Mount /public → public folder
 app.mount("/public", StaticFiles(directory=BASE_DIR / "public"), name="public")
 
-# Templates directory
+# Setup templates directory
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 
-# Request/Response Models
+# Request model
 class AgentRequest(BaseModel):
     prompt: str
 
+
+# Response model
 class AgentResponse(BaseModel):
     response: str
 
 
-# Routes
 @app.get("/")
 async def home(request: Request):
-    """Serve the main page."""
+    """
+    Serve the homepage.
+    """
     return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.post("/agent", response_model=AgentResponse)
 async def invoke_agent(request: AgentRequest):
-    """Invoke the AI agent."""
+    """
+    Call the AI agent with user input.
+    """
     try:
         if not request.prompt.strip():
             raise HTTPException(status_code=400, detail="Prompt cannot be empty.")
