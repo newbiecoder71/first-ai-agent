@@ -18,16 +18,24 @@
             e.preventDefault();
     
             const prompt = document.getElementById("prompt").value;
-            
-            const res = await fetch("https://first-ai-agent.onrender.com/agent", {
+    
+            const res = await fetch(window.location.origin + "/agent", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt })
             });
     
-            const data = await res.json();
-            document.getElementById("result").textContent = data.response;
+            let data;
+            try {
+                data = await res.json();
+            } catch (err) {
+                document.getElementById("result").textContent =
+                    "Error: Could not read server response.";
+                return;
+            }
+    
+            document.getElementById("result").textContent = data.response || "No response.";
         };
-    </script>    
+    </script>        
 </body>
 </html>
