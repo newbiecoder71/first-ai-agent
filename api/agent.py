@@ -1,23 +1,32 @@
 from langchain_openai import ChatOpenAI
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import initialize_agent, AgentType
 from dotenv import load_dotenv
 import os
 
-load_dotenv()  # load OPENAI_API_KEY
+load_dotenv()  # for local dev
 
 def run_agent(prompt: str) -> str:
-    """Runs the AI agent and returns its output."""
+    """Run a simple ReAct agent with no tools."""
 
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        raise ValueError("OPENAI_API_KEY is not set in environment variables.")
+        raise ValueError("OPENAI_API_KEY is missing.")
 
-    # LLM
-    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3)
+    # Basic LLM
+    llm = ChatOpenAI(
+        model="gpt-4o-mini",
+        temperature=0.3,
+        api_key=api_key
+    )
 
-    # Simple agent (no tools yet)
-    agent = create_react_agent(llm)
+    # Create a simple ReAct agent (zero tools)
+    agent = initialize_agent(
+        tools=[], 
+        llm=llm,
+        agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+        verbose=False
+    )
 
-    # Run agent
-    result = agent.invoke({"input": prompt})
-    return result["output"]
+    # Run it
+    result = agent.run(prompt)
+    return result

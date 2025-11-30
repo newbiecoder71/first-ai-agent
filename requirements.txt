@@ -4,7 +4,5 @@ jinja2==3.1.4
 pydantic==2.8.2
 python-dotenv==1.0.1
 
-# Tutorial-compatible AI stack
 langchain==0.1.20
 langchain-openai==0.0.8
-langgraph==0.0.11
