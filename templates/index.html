@@ -22,6 +22,7 @@
         button {
             padding: 10px 20px;
             cursor: pointer;
+            margin-right: 10px;
         }
         
         #response {
@@ -42,59 +43,37 @@
     <h1>AI Agent</h1>
 
     <form id="agentForm">
-        <textarea id="prompt" type="text" placeholder="Enter your prompt..." required></textarea>
+        <textarea id="prompt" placeholder="Enter your prompt..." required></textarea>
+
+        <!-- ⭐ ADDED CLEAR BUTTON ⭐ -->
         <button type="submit">Send</button>
+        <button type="button" id="clearBtn">Clear</button>
     </form>
 
     <div id="response"></div>
 
-    <!--    
-    <script>
-        document.getElementById("agentForm").onsubmit = async function(e) {
-            e.preventDefault();
-    
-            const prompt = document.getElementById("prompt").value;
-    
-            const res = await fetch(window.location.origin + "/agent", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ prompt })
-            });
-    
-            let data;
-            try {
-                data = await res.json();
-            } catch (err) {
-                document.getElementById("result").textContent =
-                    "Error: Could not read server response.";
-                return;
-            }
-    
-            document.getElementById("result").textContent = data.response || "No response.";
-        };
-    </script>
-    -->
     <script>
         const form = document.getElementById('agentForm');
         const promptInput = document.getElementById('prompt');
         const responseDiv = document.getElementById('response');
-        
+        const clearBtn = document.getElementById('clearBtn');
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             responseDiv.style.display = 'block';
             responseDiv.className = '';
             responseDiv.textContent = 'Loading...';
-            
+
             try {
                 const response = await fetch('/agent', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: promptInput.value })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     responseDiv.textContent = data.response;
                 } else {
@@ -106,6 +85,23 @@
                 responseDiv.textContent = 'Error: ' + error.message;
             }
         });
+
+        // ⭐ CLEAR BUTTON FUNCTIONALITY ⭐
+        clearBtn.addEventListener('click', () => {
+            promptInput.value = "";
+            responseDiv.style.display = "none";
+            responseDiv.textContent = "";
+            promptInput.focus();
+        });
+
+        // ⭐ PRESS ENTER TO SUBMIT (Shift+Enter = newline) ⭐
+        promptInput.addEventListener('keydown', (e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();       // Prevent newline
+                form.requestSubmit();     // Trigger form submission
+            }
+        });
+
     </script>     
 </body>
 </html>
