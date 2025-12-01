@@ -48,6 +48,7 @@
 
     <div id="response"></div>
 
+    <!--    
     <script>
         document.getElementById("agentForm").onsubmit = async function(e) {
             e.preventDefault();
@@ -71,6 +72,40 @@
     
             document.getElementById("result").textContent = data.response || "No response.";
         };
-    </script>        
+    </script>
+    -->
+    <script>
+        const form = document.getElementById('agentForm');
+        const promptInput = document.getElementById('prompt');
+        const responseDiv = document.getElementById('response');
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            responseDiv.style.display = 'block';
+            responseDiv.className = '';
+            responseDiv.textContent = 'Loading...';
+            
+            try {
+                const response = await fetch('/agent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: promptInput.value })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    responseDiv.textContent = data.response;
+                } else {
+                    responseDiv.className = 'error';
+                    responseDiv.textContent = 'Error: ' + (data.detail || 'Unknown error');
+                }
+            } catch (error) {
+                responseDiv.className = 'error';
+                responseDiv.textContent = 'Error: ' + error.message;
+            }
+        });
+    </script>     
 </body>
 </html>
