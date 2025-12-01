@@ -28,6 +28,15 @@
             letter-spacing: 1px;
         }
 
+        /* Date at the top-right */
+        #date {
+            position: absolute;
+            top: 10px;
+            right: 20px; /* Position at the top-right */
+            font-size: 18px;
+            color: #e5e7eb;
+        }
+
         /* Chat area */
         #chat {
             flex: 1;
@@ -125,6 +134,10 @@
 </head>
 
 <body>
+
+    <!-- Date -->
+    <div id="date"></div>
+
     <header>DataSense AI</header>
 
     <div id="chat"></div>
@@ -136,6 +149,13 @@
     </div>
 
     <script>
+        // Display today's date
+        const dateDiv = document.getElementById("date");
+
+        const today = new Date();
+        const dateString = today.toLocaleDateString(); // Format: MM/DD/YYYY
+        dateDiv.textContent = `Today's Date: ${dateString}`;
+        
         const chat = document.getElementById("chat");
         const promptInput = document.getElementById("prompt");
         const sendBtn = document.getElementById("sendBtn");
